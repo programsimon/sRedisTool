@@ -35,6 +35,9 @@ npm run electron:serve
 npm run electron:build
 ```
 
+## Download
+You can get the compiled executable on the [release page](https://github.com/programsimon/sRedisTool/releases) of this project.
+
 ## TODO
 * SSL,SSH surport
 * import and export configuration
