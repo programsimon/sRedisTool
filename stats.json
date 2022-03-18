@@ -1,0 +1,58 @@
+
+> sredistool@0.1.0 electron:build
+> vue-cli-service electron:build
+
+ INFO  Bundling render process:
+
+ DONE  Compiled successfully in 59790ms下午12:10:11
+
+  File                                      Size             Gzipped
+
+  dist_electron\bundled\js\chunk-vendors    2852.87 KiB      942.71 KiB
+  -legacy.2926b3b2.js
+  dist_electron\bundled\js\app-legacy.6b    131.24 KiB       28.66 KiB
+  4be0d9.js
+  dist_electron\bundled\css\chunk-vendor    233.76 KiB       36.22 KiB
+  s.68e2e4e4.css
+  dist_electron\bundled\css\app.649d608c    6.21 KiB         1.48 KiB
+  .css
+
+  Images and other types of assets omitted.
+
+
+ DONE  Compiled successfully in 22760ms下午12:10:36
+
+  File                                      Size             Gzipped
+
+  dist_electron\bundled\js\chunk-vendors    2852.89 KiB      942.73 KiB
+  .ff5cec7d.js
+  dist_electron\bundled\js\app.6b4be0d9.    131.23 KiB       28.65 KiB
+  js
+  dist_electron\bundled\css\chunk-vendor    233.76 KiB       36.22 KiB
+  s.68e2e4e4.css
+  dist_electron\bundled\css\app.649d608c    6.21 KiB         1.48 KiB
+  .css
+
+  Images and other types of assets omitted.
+
+ DONE  Build complete. The dist_electron\bundled directory is ready to be deployed.
+ INFO  Check out deployment instructions at https://cli.vuejs.org/guide/deployment.html
+      
+ DONE  Compiled successfully in 6839ms下午12:10:44
+
+  File                                   Size              Gzipped
+
+  dist_electron\bundled\background.js    314.73 KiB        92.03 KiB
+
+  Images and other types of assets omitted.
+
+ INFO  Building app with electron-builder:
+  • electron-builder  version=22.10.5 os=10.0.19043
+  • packaging       platform=win32 arch=x64 electron=11.4.6 appOutDir=dist_electron\win-unpacked
+  • building        target=MSI arch=x64 file=dist_electron\sRedisTool-0.1.0-win-x64.msi
+  • packaging       platform=win32 arch=ia32 electron=11.4.6 appOutDir=dist_electron\win-ia32-unpacked
+  • building        target=MSI arch=ia32 file=dist_electron\sRedisTool-0.1.0-win-ia32.msi
+  • building        target=portable file=dist_electron\sRedisTool-0.1.0-win.exe archs=x64, ia32
+  • building        target=portable file=dist_electron\sRedisTool-0.1.0-win-x64.exe archs=x64
+  • building        target=portable file=dist_electron\sRedisTool-0.1.0-win-ia32.exe archs=ia32
+ DONE  Build complete!

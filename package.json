@@ -1,0 +1,44 @@
+{
+  "name": "sredistool",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "description": "sRedisTool - GUI Tool for Redis",
+  "author": "Simon Gao",
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "electron:build": "vue-cli-service electron:build",
+    "electron:serve": "vue-cli-service electron:serve",
+    "postinstall": "electron-builder install-app-deps",
+    "postuninstall": "electron-builder install-app-deps"
+  },
+  "main": "background.js",
+  "dependencies": {
+    "echarts": "^5.1.0",
+    "electron-store": "^7.0.2",
+    "element-ui": "^2.15.1",
+    "i18n": "^0.13.2",
+    "iconv-lite": "^0.6.2",
+    "ioredis": "^4.24.6",
+    "lodash": "^4.17.21",
+    "redis-splitargs": "^1.0.1",
+    "uuid": "^3.4.0",
+    "vue": "^2.6.11",
+    "vue-clipboard2": "^0.3.1",
+    "vue-codemirror": "^4.0.6",
+    "vue-i18n": "^8.24.1",
+    "vue-loader": "^15.9.6",
+    "vue-router": "^3.2.0",
+    "xterm": "^4.11.0",
+    "xterm-addon-fit": "^0.5.0"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-router": "~4.5.0",
+    "@vue/cli-service": "^3.3.1",
+    "electron": "^11.0.0",
+    "electron-devtools-installer": "^3.1.0",
+    "vue-cli-plugin-electron-builder": "~2.0.0-rc.6",
+    "vue-template-compiler": "^2.6.12"
+  }
+}
