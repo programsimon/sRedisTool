@@ -92,6 +92,45 @@
               </el-form-item>
               </div>
             </el-collapse-item>
+            <el-collapse-item name="security">
+              <template slot="title">
+                <i class="el-icon-guide" style="padding-right:5px"/>&nbsp;{{$t('Security')}}
+              </template>
+              <el-form-item label-width="1px">
+                <el-radio-group v-model="curServer.securitytype">
+                  <el-radio label="none">{{$t('NONE')}}</el-radio>
+                  <el-radio label="tls">{{$t('SSL/TSL')}}</el-radio>
+                  <el-radio label="ssh">{{$t('SSH')}}</el-radio>
+                </el-radio-group>
+              </el-form-item>
+              <input type="file" id="fileinput" style="display: none;" @change="onSelectedFile"/>
+              <div v-if="curServer.securitytype=='tls'">
+                <el-form-item :label="$t('Public key')">
+                  <el-tooltip effect="light" :content="$t('public key tooltip')" placement="bottom">
+                    <el-input v-model="curServer.sslcafile" readonly>
+                      <el-button slot="append" :plain="true" @click="onSelectFile('sslcafile')">{{$t('Select File')}}</el-button>
+                    </el-input>
+                  </el-tooltip>
+                </el-form-item>
+                <el-form-item :label="$t('Private key')">
+                  <el-tooltip effect="light" :content="$t('private key tooltip')" placement="bottom">
+                    <el-input v-model="curServer.sslkeyfile" readonly>
+                      <el-button slot="append" :plain="true" @click="onSelectFile('sslkeyfile')">{{$t('Select File')}}</el-button>
+                    </el-input>
+                  </el-tooltip>
+                </el-form-item>
+                <el-form-item :label="$t('Authority')">
+                  <el-tooltip effect="light" :content="$t('authority tooltip')" placement="bottom">
+                    <el-input v-model="curServer.sslcertfile" readonly>
+                      <el-button slot="append" :plain="true" @click="onSelectFile('sslcertfile')">{{$t('Select File')}}</el-button>
+                    </el-input>
+                  </el-tooltip>
+                </el-form-item>
+              </div>
+              <div v-if="curServer.securitytype=='ssh'">
+                Coming soon
+              </div>
+            </el-collapse-item>
             <el-collapse-item name="advanced">
               <template slot="title">
                 <i class="el-icon-s-home" style="padding-right:5px"/>&nbsp;{{$t('Advanced config')}}
@@ -251,7 +290,8 @@ export default {
           { validator: validator.validateGroupSplit, trigger: 'blur' }
         ]
       },
-      activeConfigSctions: []
+      activeConfigSctions: [],
+      activeSelectFileType: ''
     }
   },
   mounted() {
@@ -554,6 +594,39 @@ export default {
         callback()
       }
     },
+    onSelectFile(filetype) {
+      if(!filetype){
+        return
+      }
+      this.activeSelectFileType = filetype
+      let fileInput = document.querySelector('#fileinput')
+      
+      if(this.activeSelectFileType == 'sslcafile'){
+        fileInput.accept = '.pem,.crt'
+      }else if(this.activeSelectFileType == 'sslkeyfile'){
+        fileInput.accept = '.pem,.key'
+      }else if(this.activeSelectFileType == 'sslcertfile'){
+        fileInput.accept = '.pem,.crt'
+      }
+      fileInput.click()
+    },
+    onSelectedFile(){
+      let fileInput = document.querySelector('#fileinput')
+      let filename = ''
+      if(fileInput && fileInput.files && fileInput.files.length > 0){
+        filename =  fileInput.files[0].path
+      }
+      if(!filename){
+        return
+      }
+      if(this.activeSelectFileType == 'sslcafile'){
+        this.curServer.sslcafile = filename
+      }else if(this.activeSelectFileType == 'sslkeyfile'){
+        this.curServer.sslkeyfile = filename
+      }else if(this.activeSelectFileType == 'sslcertfile'){
+        this.curServer.sslcertfile = filename
+      }
+    },
     defaultServerInfo(groupId){
       return {
         groupid: groupId,
@@ -570,7 +643,11 @@ export default {
         substrsize: 3,
         splitstr: ':',
         encoding: 'utf8',
-        sort: false
+        sort: false,
+        securitytype: 'none',
+        sslcafile: '',
+        sslkeyfile: '',
+        sslcertfile: ''
       }
     }
   },

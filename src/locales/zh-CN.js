@@ -165,5 +165,16 @@ module.exports = {
   'Uptime in days': '运行天数',
   // terminal
   'Command monitor': '命令监听',
-  'Start monitor': '启动监听'
+  'Start monitor': '启动监听',
+  'Security': '安全',
+  'NONE': '无',
+  'SSH': 'SSH',
+  'SSL/TSL': 'SSL/TSL',
+  'Public key': '公钥',
+  'Private key': '私钥',
+  'Authority': '授权',
+  'Select File': '选择文件',
+  'public key tooltip': '公钥文件, Redis服务配置文件中tls-ca-cert-file配置项',
+  'private key tooltip': '公钥文件, Redis服务配置文件中tls-key-file配置项',
+  'authority tooltip': '公钥文件, Redis服务配置文件中tls-cert-file配置项'
 }

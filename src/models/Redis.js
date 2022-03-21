@@ -2,6 +2,7 @@
 
 import ioredis from 'ioredis'
 import { v4 as uuidv4 } from 'uuid'
+import fs from 'fs'
 
 // Create an ioredis object using our server definition and extend the original ioredis functions
 function Redis(...args) {
@@ -13,6 +14,7 @@ function Redis(...args) {
     && typeof arguments[0] === 'object'
     && typeof arguments[0].name === 'string'){
     var server = arguments[0]
+    
     var options = {
       host: server.host,
       port: server.port,
@@ -33,7 +35,19 @@ function Redis(...args) {
         }
       },
       enableReadyCheck: true,
-      showFriendlyErrorStack: true
+      showFriendlyErrorStack: true,
+      tls: function(){
+        if(server.securitytype === 'tls'){
+          return {
+            ca: fs.readFileSync(server.sslcafile),
+            key: fs.readFileSync(server.sslkeyfile),
+            cert: fs.readFileSync(server.sslcertfile),
+            rejectUnauthorized: false
+          }
+        }else{
+          return null
+        }
+      }()
     }
     if(!server.cluster){
       redis = new ioredis(options)
