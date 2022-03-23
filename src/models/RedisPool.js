@@ -1,13 +1,19 @@
 'use strict'
 import Redis from 'm/Redis'
+import { v4 as uuidv4 } from 'uuid'
 
 export default {
   name: 'RedisPool',
   connections: [],
   newRedis(...args) {
-    let redis = new Redis(...args)
-    this.connections.push(redis)
-    return redis
+    let that = this
+    return Redis(...args)
+      .then(redis => {
+        redis.connectionId = uuidv4()
+        console.log(redis)
+        that.connections.push(redis)
+        return redis
+      })
   },
   duplicateRedis(connectionId) {
     let redis = this.getRedis(connectionId)

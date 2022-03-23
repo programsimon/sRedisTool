@@ -170,12 +170,14 @@ module.exports = {
   'Security': 'Security',
   'NONE': 'NONE',
   'SSH': 'SSH',
-  'SSL/TSL': 'SSL/TSL',
+  'SSL/TLS': 'SSL/TLS',
   'Public key': 'Public key',
   'Private key': 'Private key',
   'Authority': 'Authority',
   'Select File': 'Select File',
   'public key tooltip': 'Public key file, tls-ca-cert-file in Redis server configuration file',
   'private key tooltip': 'Private key file, tls-key-file in Redis server configuration file',
-  'authority tooltip': 'Authority file, tls-cert-file in Redis server configuration file'
+  'authority tooltip': 'Authority file, tls-cert-file in Redis server configuration file',
+  'SSH User Name': 'SSH User Name',
+  'Passphrase': 'Passphrase'
 }

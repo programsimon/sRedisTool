@@ -99,7 +99,7 @@
               <el-form-item label-width="1px">
                 <el-radio-group v-model="curServer.securitytype">
                   <el-radio label="none">{{$t('NONE')}}</el-radio>
-                  <el-radio label="tls">{{$t('SSL/TSL')}}</el-radio>
+                  <el-radio label="tls">{{$t('SSL/TLS')}}</el-radio>
                   <el-radio label="ssh">{{$t('SSH')}}</el-radio>
                 </el-radio-group>
               </el-form-item>
@@ -128,7 +128,32 @@
                 </el-form-item>
               </div>
               <div v-if="curServer.securitytype=='ssh'">
-                Coming soon
+                <el-form-item :label="$t('Host')">
+                  <el-input v-model="curServer.sshhost"></el-input>
+                </el-form-item>
+                <el-form-item :label="$t('Port')">
+                  <el-input v-model.number="curServer.sshport"></el-input>
+                </el-form-item>
+                <el-form-item :label="$t('SSH User Name')">
+                  <el-input v-model="curServer.sshusername"></el-input>
+                </el-form-item>
+                <el-form-item :label="$t('Password')">
+                  <el-input v-model="curServer.sshpassword" :show-password="!showSSHPassword">
+                    <el-radio slot="prepend" v-model="curServer.sshkeytype" label="pass"><span></span></el-radio>
+                    <el-checkbox slot="append" :label="$t('Show Password')" v-model="showSSHPassword"></el-checkbox>
+                  </el-input>
+                </el-form-item>
+                <el-form-item :label="$t('Private key')">
+                  <el-input v-model="curServer.sshkeyfile" readonly >
+                    <el-radio slot="prepend" v-model="curServer.sshkeytype" label="keyfile"><span></span></el-radio>
+                    <el-button slot="append" :plain="true" @click="onSelectFile('sshkeyfile')">{{$t('Select File')}}</el-button>
+                  </el-input>
+                </el-form-item>
+                <el-form-item :label="$t('Passphrase')">
+                  <el-input v-model="curServer.sshkeypassphrase" :show-password="!showSSHPassphrase" :disabled="!(curServer.sshkeytype == 'keyfile')">
+\                    <el-checkbox slot="append" :label="$t('Show Password')" v-model="showSSHPassphrase"></el-checkbox>
+                  </el-input>
+                </el-form-item>
               </div>
             </el-collapse-item>
             <el-collapse-item name="advanced">
@@ -259,6 +284,8 @@ export default {
       groupNameTitle: '',
       serverEditVis: false,
       showPassword: false,
+      showSSHPassword: false,
+      showSSHPassphrase: false,
       serverGroups: [],
       curGroup: {},
       curServer: {},
@@ -472,19 +499,22 @@ export default {
         }
         let serverCofnig = _.cloneDeep(this.curServer)
         serverCofnig.redisretrytimes = -1
-        let redis = RedisPool.newRedis(serverCofnig)
-        redis.once('ready', async () => {
-          this.$message.success(this.$t('Test connection successed'))
-          RedisPool.closeRedis(redis.connectionId)
-        })
-        redis.once('error', async (error) => {
-          this.$message.error(this.$t('Test connection failed', error))
-          RedisPool.closeRedis(redis.connectionId)
-        })
-        redis.once('ClusterAllFailedError', async (error) => {
-          this.$message.error(this.$t('Test connection failed', error))
-          RedisPool.closeRedis(redis.connectionId)
-        })
+        RedisPool.newRedis(serverCofnig)
+          .then(redis => {
+            redis.once('ready', async () => {
+              this.$message.success(this.$t('Test connection successed'))
+              RedisPool.closeRedis(redis.connectionId)
+            })
+            redis.once('error', async (error) => {
+              this.$message.error(this.$t('Test connection failed', error))
+              RedisPool.closeRedis(redis.connectionId)
+            })
+            redis.once('ClusterAllFailedError', async (error) => {
+              this.$message.error(this.$t('Test connection failed', error))
+              RedisPool.closeRedis(redis.connectionId)
+            })
+
+          })
       })
     },
     onEditServer(serverId) {
@@ -607,6 +637,8 @@ export default {
         fileInput.accept = '.pem,.key'
       }else if(this.activeSelectFileType == 'sslcertfile'){
         fileInput.accept = '.pem,.crt'
+      }else if(this.activeSelectFileType == 'sshkeyfile'){
+        fileInput.accept = '*.*'
       }
       fileInput.click()
     },
@@ -625,6 +657,8 @@ export default {
         this.curServer.sslkeyfile = filename
       }else if(this.activeSelectFileType == 'sslcertfile'){
         this.curServer.sslcertfile = filename
+      }else if(this.activeSelectFileType == 'sshkeyfile'){
+        this.curServer.sshkeyfile = filename
       }
     },
     defaultServerInfo(groupId){
@@ -647,7 +681,14 @@ export default {
         securitytype: 'none',
         sslcafile: '',
         sslkeyfile: '',
-        sslcertfile: ''
+        sslcertfile: '',
+        sshhost: '',
+        sshport: 22,
+        sshusername: '',
+        sshpassword: '',
+        sshkeyfile: '',
+        sshkeypassphrase: '',
+        sshkeytype: 'pass'
       }
     }
   },

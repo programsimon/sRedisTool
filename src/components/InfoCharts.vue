@@ -157,30 +157,18 @@ export default {
       if(!redis) {
         return
       }
-      if(redis.isCluster){
-        let nodes = redis.nodes('master')  
-        _.each(nodes, (node) => {
-          this.servers.push({
-            key: node.options.host + ":" + node.options.port,
-            name: node.options.host + ":" + node.options.port + " (master)",
-            lastSummary: null
-          })
-        })
-        nodes = redis.nodes('slave')  
-        _.each(nodes, (node) => {
-          this.servers.push({
-            key: node.options.host + ":" + node.options.port,
-            name: node.options.host + ":" + node.options.port + " (slave)",
-            lastSummary: null
-          })
-        })
-      }else {
-        this.servers.push({
-          key: redis.options.host + ":" + redis.options.port,
-          name: redis.options.host + ":" + redis.options.port + " (master)",
+
+
+      let nodes = redis.getServerNodes()
+      let that = this
+      _.each(nodes,(node) => {
+        that.servers.push({
+          key: node.key,
+          name: node.name,
           lastSummary: null
         })
-      }
+      })
+
     },
     initCharts() {
       this.initMemChart()
@@ -364,7 +352,7 @@ export default {
         node.info()
         .then((result) => {
           that.loadChartsInfo(result,
-            node.options.host + ":" + node.options.port,
+            node.getNodeKey? node.getNodeKey(): node.options.host + ":" + node.options.port,
             now)
         })
         .catch( (error) => {
@@ -407,7 +395,7 @@ export default {
       curData = this.initCurCharData(now, this.chartCpuData, maxLength)
       let utime = parseFloat(infoSet.CPU.used_cpu_sys) | 0.0 + 
                   parseFloat(infoSet.CPU.used_cpu_user) | 0.0
-      if(lastSummary === null) {
+      if(lastSummary === null || lastSummary === undefined) {
         curData[index + 1] = 0.0
       }else {
         let span = this.getTimeSpan(new Date(now), new Date(lastSummary.time))
@@ -451,7 +439,7 @@ export default {
       // commands
       curData = this.initCurCharData(now, this.chartCommandsData, maxLength)
       let cmds = parseInt(infoSet.Stats.total_commands_processed) | 0
-      if(lastSummary === null) {
+      if(lastSummary === null || lastSummary === undefined) {
         curData[index + 1] = 0
       }else {
         let span = this.getTimeSpan(new Date(now), new Date(lastSummary.time))

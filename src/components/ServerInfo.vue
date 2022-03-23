@@ -50,7 +50,6 @@
 </template>
 
 <script>
-import EditorString from './EditorString'
 import InfoClients from './InfoClients.vue'
 import InfoConfig from './InfoConfig.vue'
 import InfoInfo from './InfoInfo.vue'
@@ -59,7 +58,6 @@ import InfoCharts from './InfoCharts.vue'
 export default {
   name: 'ServerInfo',
   components: {
-    EditorString,
     InfoInfo,
     InfoConfig,
     InfoClients,

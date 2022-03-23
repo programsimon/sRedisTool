@@ -169,12 +169,14 @@ module.exports = {
   'Security': '安全',
   'NONE': '无',
   'SSH': 'SSH',
-  'SSL/TSL': 'SSL/TSL',
+  'SSL/TLS': 'SSL/TLS',
   'Public key': '公钥',
   'Private key': '私钥',
   'Authority': '授权',
   'Select File': '选择文件',
   'public key tooltip': '公钥文件, Redis服务配置文件中tls-ca-cert-file配置项',
   'private key tooltip': '公钥文件, Redis服务配置文件中tls-key-file配置项',
-  'authority tooltip': '公钥文件, Redis服务配置文件中tls-cert-file配置项'
+  'authority tooltip': '公钥文件, Redis服务配置文件中tls-cert-file配置项',
+  'SSH User Name': 'SSH用户',
+  'Passphrase': '秘钥锁码'
 }

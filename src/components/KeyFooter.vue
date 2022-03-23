@@ -123,6 +123,9 @@ export default {
     onDatabaseChanged() {
       var that = this
       var redis = RedisPool.getRedis(this.redisId)
+      if(!redis){
+        return
+      }
       if(this.curDatabase >= this.databaseSize) {
         this.curDatabase = 0
       }

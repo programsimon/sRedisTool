@@ -80,36 +80,10 @@ export default {
       if(!redis) {
         return
       }
-      if(redis.isCluster){
-        let nodes = redis.nodes('master')  
-        _.each(nodes, (node) => {
-          this.servers.push({
-            key: node.options.host + ":" + node.options.port,
-            name: node.options.host + ":" + node.options.port + " (master)"
-          })
-        })
-        nodes = redis.nodes('slave')  
-        _.each(nodes, (node) => {
-          this.servers.push({
-            key: node.options.host + ":" + node.options.port,
-            name: node.options.host + ":" + node.options.port + " (slave)"
-          })
-        })
-        if(this.servers.length > 0) {
-          this.curServer = this.servers[0].key
-        }
-        let curNode = this.getClusterNode(redis, this.curServer)
-        if(curNode) {
-          return curNode.info()
-        }
 
-      }else {
-        this.servers.push({
-          key: redis.options.host + ":" + redis.options.port,
-          name: redis.options.host + ":" + redis.options.port + " (master)"
-        })
-        this.curServer = redis.options.host + ":" + redis.options.port
-        return redis.info()
+      this.servers = redis.getServerNodes()
+      if(this.servers.length > 0){
+        this.curServer = this.servers[0].key
       }
     },
     onSelected(){
@@ -145,28 +119,32 @@ export default {
     },
     startMonitor() {
       let that = this
-      this.redis = RedisPool.duplicateRedis(this.redisId)
-      if(!this.redis) {
-        return
-      }
-      if(!this.xterm) {
-        this.initTerminal()
-      }
-      this.redis.on('ready',async (event) => {
-        let node = this.redis
-        if(this.redis.isCluster) {
-          node = this.getClusterNode(this.redis, this.curServer)
-        }
-        if(!node) {
-          return
-        }
+      RedisPool.duplicateRedis(this.redisId)
+        .then(redis => {
+          that.redis = redis
+          if(!that.redis) {
+            return
+          }
+          if(!that.xterm) {
+            that.initTerminal()
+          }
+          that.redis.on('ready',async (event) => {
+            let node = that.redis
+            if(that.redis.isCluster) {
+              node = that.getClusterNode(that.redis, that.curServer)
+            }
+            if(!node) {
+              return
+            }
 
-        node.monitor((err, monitor) => {
-          this.monitor = monitor
-          this.monitor.on("monitor", this.onMonitor)
-          this.xterm.writeln('Monitor started')
+            node.monitor((err, monitor) => {
+              that.monitor = monitor
+              that.monitor.on("monitor", that.onMonitor)
+              that.xterm.writeln('Monitor started')
+            })
+          })
         })
-      })
+      
       
     },
     onMonitor(time, args, source, database) {

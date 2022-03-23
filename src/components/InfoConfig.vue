@@ -86,35 +86,17 @@ export default {
       if(!redis) {
         return
       }
+
+      this.servers = redis.getServerNodes()
+      if(this.servers.length > 0){
+        this.curServer = this.servers[0].key
+      }
       if(redis.isCluster){
-        let nodes = redis.nodes('master')  
-        _.each(nodes, (node) => {
-          this.servers.push({
-            key: node.options.host + ":" + node.options.port,
-            name: node.options.host + ":" + node.options.port + " (master)"
-          })
-        })
-        nodes = redis.nodes('slave')  
-        _.each(nodes, (node) => {
-          this.servers.push({
-            key: node.options.host + ":" + node.options.port,
-            name: node.options.host + ":" + node.options.port + " (slave)"
-          })
-        })
-        if(this.servers.length > 0) {
-          this.curServer = this.servers[0].key
-        }
         let curNode = this.getClusterNode(redis, this.curServer)
         if(curNode) {
           return curNode.config('get','*')
         }
-
-      }else {
-        this.servers.push({
-          key: redis.options.host + ":" + redis.options.port,
-          name: redis.options.host + ":" + redis.options.port + " (master)"
-        })
-        this.curServer = redis.options.host + ":" + redis.options.port
+      }else{
         return redis.config('get','*')
       }
     },

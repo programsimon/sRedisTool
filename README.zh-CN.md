@@ -15,6 +15,7 @@
 * Redis命令行。
 * Redis命令监听。
 * 多语言支持，目前支持简体中文，英文。
+* 使用SSL/TLS、SSH连接。(暂不支持集群方式使用SSH连接)
 
 ## 项目构建
 ### 项目初始化
@@ -37,8 +38,9 @@ npm run electron:build
 你可以在本项目[发布页](https://github.com/programsimon/sRedisTool/releases)，获取已编译的可执行文件。
 
 ## TODO
-* SSL,SSH 支持。
 * 配置文件导入、导出支持。
+* cluster重新测试监控部分
+* cluster支持ssh
 
 ## License
 

@@ -17,6 +17,7 @@ This tool is supported to run on Windows, Mac and Linux environments and is curr
 * Redis command line.
 * Redis command monitor.
 * Multi-language support, currently supports Simplified Chinese, English.
+* Connect using SSL/TLS, SSH。(Cluster mode using SSH connection is not supported at this time)
 
 ## Project setup
 ### Project initialization
@@ -39,7 +40,6 @@ npm run electron:build
 You can get the compiled executable on the [release page](https://github.com/programsimon/sRedisTool/releases) of this project.
 
 ## TODO
-* SSL,SSH surport
 * import and export configuration
 
 ## License

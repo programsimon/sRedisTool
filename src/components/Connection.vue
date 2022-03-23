@@ -115,28 +115,31 @@ export default {
       })
     },
     initRedis() {
-      let redis = RedisPool.newRedis(this.config)
-      this.redisId = redis.connectionId
-      redis.once('error', async (error) => {
-        this.$message.error({
-          message: this.$t('connect redis failed', error),
-          showClose: true,
-          duration: 10000})
-        redis.close()
-      });
+      let that = this
+      RedisPool.newRedis(this.config)
+        .then(redis => {
+          that.redisId = redis.connectionId
+          redis.once('error', async (error) => {
+            that.$message.error({
+              message: this.$t('connect redis failed', error),
+              showClose: true,
+              duration: 10000})
+            redis.close()
+          });
 
-      // give it to all compnents
-      redis.once('ready', async () => {
-        redis.removeAllListeners('error')
-        // this.$refs.keyFooter.onRedisReady()
+          // give it to all compnents
+          redis.once('ready', async () => {
+            redis.removeAllListeners('error')
+            // this.$refs.keyFooter.onRedisReady()
 
-        this.addRedisEventLinstener(redis)
+            that.addRedisEventLinstener(redis)
 
-        //send redis is init ok event
-        this.dispatchEventToChildren({
-          name : 'redisInitialized'
+            //send redis is init ok event
+            that.dispatchEventToChildren({
+              name : 'redisInitialized'
+            })
+          });
         })
-      });
 
     },
     addRedisEventLinstener(redis) {
