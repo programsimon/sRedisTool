@@ -25,6 +25,8 @@ module.exports = {
   'Redis Servers Settings': 'Redis服务器设定',
   // Servers setting
   'Servers': '服务器',
+  'Import Server Settings': '导入服务器配置',
+  'Export Server Settings': '导出服务器配置',
   'Add Group': '添加组',
   'Rename Group': '修改组名称',
   'Delete Group': '删除组',
@@ -178,5 +180,14 @@ module.exports = {
   'private key tooltip': '公钥文件, Redis服务配置文件中tls-key-file配置项',
   'authority tooltip': '公钥文件, Redis服务配置文件中tls-cert-file配置项',
   'SSH User Name': 'SSH用户',
-  'Passphrase': '秘钥锁码'
+  'Passphrase': '秘钥锁码',
+  'Select export file': '请选择导出文件',
+  'Config file type': '配置文件',
+  'All file type': '所有文件',
+  'Select import file': '请选择导入文件',
+  'Import configuration file failed': '导入配置文件失败:{message}',
+  'read file failed': '读取文件失败',
+  'not surpported file format': '不支持的文件格式',
+  'Import configuration file successed': '导入配置文件成功',
+  'Not a configuration file for xxx': '不是{appName}的配置文件',
 }

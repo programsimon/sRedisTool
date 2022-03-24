@@ -1,5 +1,6 @@
 'use strict'
 import {ipcRenderer} from 'electron'
+import { result } from 'lodash'
 
 export default {
   name: 'ElectronBridge',
@@ -22,6 +23,25 @@ export default {
     }
     ipcRenderer.on(enventName , function(event, param) {
       cb(param)
+    })
+  },
+  showSaveDialog(options){
+    return ipcRenderer.invoke('showSaveDialog', options)
+  },
+  showOpenDialog(options){
+    return ipcRenderer.invoke('showOpenDialog', options)
+  },
+  saveFile(filePath,content,options){
+    return ipcRenderer.invoke('saveFile', {
+      filePath,
+      content,
+      options
+    })
+  },
+  readFile(filePath,options){
+    return ipcRenderer.invoke('readFile', {
+      filePath,
+      options
     })
   }
 }

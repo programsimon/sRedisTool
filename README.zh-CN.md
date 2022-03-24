@@ -16,6 +16,7 @@
 * Redis命令监听。
 * 多语言支持，目前支持简体中文，英文。
 * 使用SSL/TLS、SSH连接。(暂不支持集群方式使用SSH连接)
+* 可导入和导出配置文件，可导入RESP.app配置文件
 
 ## 项目构建
 ### 项目初始化
@@ -38,9 +39,12 @@ npm run electron:build
 你可以在本项目[发布页](https://github.com/programsimon/sRedisTool/releases)，获取已编译的可执行文件。
 
 ## TODO
-* 配置文件导入、导出支持。
+* 清理serversetting代码
 * cluster重新测试监控部分
 * cluster支持ssh
+
+## 已知问题
+* 初次使用时（无配置文件），i18n显示不正确
 
 ## License
 

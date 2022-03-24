@@ -25,6 +25,8 @@ module.exports = {
   'Redis Servers Settings': 'Redis Server Settings',
   // Servers setting
   'Servers': 'Servers',
+  'Import Server Settings': 'Import Server Settings',
+  'Export Server Settings': 'Export Server Settings',
   'Add Group': 'Add Group',
   'Rename Group': 'Rename Group',
   'Delete Group': 'Delete Group',
@@ -179,5 +181,14 @@ module.exports = {
   'private key tooltip': 'Private key file, tls-key-file in Redis server configuration file',
   'authority tooltip': 'Authority file, tls-cert-file in Redis server configuration file',
   'SSH User Name': 'SSH User Name',
-  'Passphrase': 'Passphrase'
+  'Passphrase': 'Passphrase',
+  'Select export file': 'Please select export file',
+  'Config file type': 'Configuration file',
+  'All file type': 'All files',
+  'Select import file': 'Please select import file',
+  'Import configuration file failed': 'Import configuration file failed:{message}',
+  'read file failed': 'read file failed',
+  'not surpported file format': 'not surpported file format',
+  'Import configuration file successed': 'Import configuration file failed',
+  'Not a configuration file for xxx': 'Not a configuration file for {appName}',
 }

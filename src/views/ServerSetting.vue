@@ -1,15 +1,85 @@
 <template>
   <el-container>
     <el-aside width="40%">
+      <el-tree
+        :data="serverGroups"
+        node-key="id"
+        :props="treeProps"
+        draggable
+        :allow-drop="onTreeAllowdrop"
+        @node-drop='onTreeDragEnd'>
+        <div slot-scope="{ node, data }" class="custom-tree-node">
+          <!-- <div v-show="!data.host" class="custom-tree-node"> -->
+            <div v-show="!data.host">
+              <i class="el-icon-folder" ></i>
+              <span style="padding-left:10px">{{data.name}}</span>
+            </div>
+            <div v-show="data.host">
+              <i class="el-icon-connection" ></i>
+              <span style="padding-left:10px">{{data.name}}</span>
+            </div>
+            <el-button-group v-show="!data.host">
+              <el-tooltip effect="light" :content="$t('Rename Group')" placement="bottom">
+                <el-button :plain="true" size="small" icon="el-icon-s-tools" @click.stop="onRenameGroup(data.id)"/>
+              </el-tooltip>
+              <el-tooltip effect="light" :content="$t('Delete Group')" placement="bottom">
+                <el-button :plain="true" size="small" icon="el-icon-delete-solid" @click.stop="onDeleteGroup(data.id)"/>
+              </el-tooltip>
+              <!-- <el-tooltip effect="light" :content="$t('Sort')" placement="bottom">
+                <el-button :plain="true" size="small" icon="el-icon-sort" @click.stop="onSortGroup(data.id)"/>
+              </el-tooltip> -->
+              <el-tooltip effect="light" :content="$t('Add Redis Server')" placement="bottom">
+                <el-button :plain="true" size="small" icon="el-icon-plus" @click.stop="onAddServer(data.id)"/>
+              </el-tooltip>
+            </el-button-group>
+            <el-button-group v-show="data.host">
+              <el-tooltip effect="light" :content="$t('Delete Server')" placement="bottom">
+                <el-button :plain="true" size="small" icon="el-icon-delete" @click="onDeleteServer(data.id)"/>
+              </el-tooltip>
+              <el-tooltip effect="light" :content="$t('Open Server')" placement="bottom">
+                <el-button :plain="true" size="small" icon="el-icon-folder-opened" @click="onOpenServer(data.id)"/>
+              </el-tooltip>
+            </el-button-group>
+          <!-- </div> -->
+          <!-- <div v-show="data.host" class="custom-tree-node">
+            <i class="el-icon-connection" ></i>
+            <span>{{data.name}}</span>
+            <el-button-group>
+              <el-tooltip effect="light" :content="$t('Delete Server')" placement="bottom">
+                <el-button :plain="true" size="mini" icon="el-icon-delete" @click="onDeleteServer(server.id, group.id)"/>
+              </el-tooltip>
+              <el-tooltip effect="light" :content="$t('Open Server')" placement="bottom">
+                <el-button :plain="true" size="mini" icon="el-icon-folder-opened" @click="onOpenServer(server.id)"/>
+              </el-tooltip>
+            </el-button-group>
+          </div> -->
+        </div>
+        <!-- <span class="custom-tree-node" slot-scope="{ node, data }">
+          <i class="el-icon-folder" ></i>
+          <span>{{ node.label }}</span>
+          <span>
+            <el-button
+              type="text"
+              size="mini"
+              @click="() => append(data)">
+              Append
+            </el-button>
+            <el-button
+              type="text"
+              size="mini"
+              @click="() => remove(node, data)">
+              Delete
+            </el-button>
+          </span>
+        </span> -->
+      </el-tree>
+      <!--
       <el-menu ref="mnuServers" @select="onServerSelected">
         <el-submenu :index="group.id" v-for="group in serverGroups" :key="group.id">
           <template slot="title">
-            <i class="el-icon-folder-add"></i>
+            <i class="el-icon-folder"></i>
             <span>{{group.name}}</span>
             <el-button-group class="server-group-button">
-              <el-tooltip effect="light" :content="$t('Add Group')" placement="bottom">
-                <el-button :plain="true" size="mini" icon="el-icon-circle-plus" @click.stop="onAddGroup(group.id)"/>
-              </el-tooltip>
               <el-tooltip effect="light" :content="$t('Rename Group')" placement="bottom">
                 <el-button :plain="true" size="mini" icon="el-icon-s-tools" @click.stop="onRenameGroup(group.id)"/>
               </el-tooltip>
@@ -40,9 +110,28 @@
           </el-menu-item>
         </el-submenu>
       </el-menu>
+      -->
     </el-aside>
     <el-container>
       <el-main>
+        <el-form v-show="!serverEditVis">
+          <el-menu :collapse="true">
+            <el-submenu index="addtcommand">
+              <template slot="title">
+                <i class="el-icon-s-operation"></i>
+              </template>
+              <el-menu-item index="addgroup" @click="onAddGroup">{{$t('Add Group')}}</el-menu-item>
+              <el-menu-item index="export" @click="onExportSettings">{{$t('Export Server Settings')}}</el-menu-item>
+              <el-submenu index="import">
+                <span slot="title">{{$t('Import Server Settings')}}</span>
+                <el-menu-item index="importsrt" @click="onImportSettings('srt')">sRedisTool</el-menu-item>
+                <el-tooltip effect="light" content="Redis Desktop Manager" placement="bottom">
+                  <el-menu-item index="importrdm" @click="onImportSettings('rdm')">RESP.app</el-menu-item>
+                </el-tooltip>
+              </el-submenu>
+            </el-submenu>
+          </el-menu>
+        </el-form>
         <el-form ref="serverForm" 
           label-position="left" 
           :model="curServer" 
@@ -220,7 +309,7 @@
 import bridge from 'm/ElectronBridge'
 import eventBus from 'm/EventBus'
 import RedisPool from 'm/RedisPool'
-import EncodingSelect from 'c/EncodingSelect.vue';
+import EncodingSelect from 'c/EncodingSelect.vue'
 
 export default {
   name: "ServerSetting",
@@ -318,7 +407,11 @@ export default {
         ]
       },
       activeConfigSctions: [],
-      activeSelectFileType: ''
+      activeSelectFileType: '',
+      treeProps: {
+        label: 'name',
+        children: 'servers'
+      }
     }
   },
   mounted() {
@@ -411,13 +504,14 @@ export default {
       this.groupVis = false
     },
     onAddServer(groupId) {
-      this.curServer = this.defaultServerInfo(groupId)
+      this.curServer = this.defaultServerInfo()
+      this.curGroup = this.findGroup(groupId)
       this.doShowEditArea()
     },
     onServerSelected(serverId, ids) {
       var group = this.findGroup(ids[0])
       var server = this.findServer(serverId, group)
-      this.curServer = _.defaultsDeep(_.cloneDeep(server),this.defaultServerInfo(group.id))
+      this.curServer = _.defaultsDeep(_.cloneDeep(server),this.defaultServerInfo())
       this.doShowEditArea()
     },
     doShowEditArea() {
@@ -426,8 +520,8 @@ export default {
       this.activeConfigSctions = []
       this.$refs['serverForm'].resetFields()
     },
-    onDeleteServer(serverId, groupId) {
-      var group = this.findGroup(groupId)
+    onDeleteServer(serverId) {
+      var group = this.findGroupByServerId(serverId)
       if(!group) {
         return
       }
@@ -459,11 +553,11 @@ export default {
         if (!valid) {
           return
         }
-        var group = this.findGroup(this.curServer.groupid)
+        var group = this.findGroup(this.curGroup.id)
         if(!group) {
           // use the first one
           group = this.serverGroups[0]
-          this.curServer.groupid = group.id
+          // this.curServer.groupid = group.id
         }
 
         var serverIndex = this.findServerIndex(this.curServer.id, group)
@@ -471,13 +565,13 @@ export default {
         if(serverIndex >= 0) {
           var s = _.cloneDeepWith(this.curServer)
           // delete groupid prop
-          s = _.omit(s, ['groupid']);
+          // s = _.omit(s, ['groupid']);
           group.servers[serverIndex] = s
         }else {
           this.curServer.id = this.$uuid().replace(/-/g, '')
           var s = _.cloneDeepWith(this.curServer)
           // delete groupid prop
-          s = _.omit(s, ['groupid'])
+          // s = _.omit(s, ['groupid'])
           if(!group.servers){
             group.servers = []
           }
@@ -661,10 +755,194 @@ export default {
         this.curServer.sshkeyfile = filename
       }
     },
-    defaultServerInfo(groupId){
+    onImportSettings(appType){
+      let that = this
+      try
+      {
+        let filters = [
+                    { name: this.$t('Config file type'), extensions:['json']},
+                    { name: this.$t('All file type'), extensions:['*']}
+          ]
+        bridge.showOpenDialog({
+          title: this.$t('Select import file'),
+          filters:filters,
+          properties: ['createDirectory','openFile']
+        }).then(result =>{
+          if(!result || result.canceled == true || !result.filePaths || result.filePaths <= 0){
+            return
+          }
+          return bridge.readFile(result.filePaths[0],{encoding: 'utf8'})
+        }).then(result => {
+          if(result === undefined){
+            return
+          }
+          that.tryImportConfig(result,appType)
+        })
+      }catch(error){
+        that.$message.error(that.$t('Import configuration file failed',{message:error.message}))
+      }
+    },
+    tryImportConfig(content,appType){
+      let config = null
+     
+      //sRedisTool config
+      if(appType === 'srt'){
+        this.importSRTConfig(content)
+      }
+      else if(appType == 'rdm'){
+        this.importRDMConfig(content)
+      }
+      else{
+        this.$message.error(this.$t('Import configuration file failed',{message:this.$t('not surpported file format')}))
+      }
+      
+    },
+    importSRTConfig(content){
+      if(typeof content !== 'string'){
+        this.$message.error(this.$t('Import configuration file failed',{message:this.$t('read file failed')}))
+        return
+      }
+      let config = null
+      try{
+        config = JSON.parse(content)
+        if(!config || !config.srt){
+          this.$message.error(this.$t('Import configuration file failed',{message:this.$t('Not a configuration file for xxx',{appName:'sRedisTool'})}))
+          return 
+        }
+      }catch{
+        this.$message.error(this.$t('Import configuration file failed',{message:this.$t('Not a configuration file for xxx',{appName:'sRedisTool'})}))
+        return
+      }
+
+      let groups = config.srt
+      _.each(groups,(group) => {
+        // new id
+        group.id = this.$uuid().replace(/-/g, '')
+        _.each(group.servers,(server) => {
+          server.id = this.$uuid().replace(/-/g, '')
+        })
+        this.serverGroups.push(group)
+      })
+      bridge.setConfig('servergroups',this.serverGroups)
+      this.$message.success(this.$t('Import configuration file successed'))
+    },
+    importRDMConfig(content){
+      if(typeof content !== 'string'){
+        this.$message.error(this.$t('Import configuration file failed',{message:this.$t('read file failed')}))
+        return
+      }
+      let config = null
+      try{
+        config = JSON.parse(content)
+        if(!config || !Array.isArray(config)){
+          this.$message.error(this.$t('Import configuration file failed',{message:this.$t('Not a configuration file for xxx',{appName:'RESP.app'})}))
+          return 
+        }
+      }catch{
+        this.$message.error(this.$t('Import configuration file failed',{message:this.$t('Not a configuration file for xxx',{appName:'RESP.app'})}))
+        return
+      }
+      let dftgroup = {
+        name: 'Default RESP.app Group',
+        id: this.$uuid().replace(/-/g, ''),
+        servers: []
+      }
+      _.each(config, (item) => {
+        if(item.type === 'group'){
+          let group = {
+            name: item.name,
+            id: this.$uuid().replace(/-/g, ''),
+            servers: []
+          }
+          _.each(item.connections,(server) => {
+            group.servers.push(this.convertRDMToSRT(server,group.id))
+          })
+          this.serverGroups.push(group)
+        }else{
+          dftgroup.servers.push(this.convertRDMToSRT(item,dftgroup.id))
+        }
+      })
+      if(dftgroup.servers.length > 0){
+        this.serverGroups.push(dftgroup)
+      }
+      bridge.setConfig('servergroups',this.serverGroups)
+      this.$message.success(this.$t('Import configuration file successed'))
+    },
+    convertRDMToSRT(rdmserver,groupId){
+      let securitytype = 'none'
+      if(rdmserver.ssl === true){
+        securitytype = 'tls'
+      }else if(rdmserver.ssl === false && rdmserver.ssh_host && rdmserver.ssh_host.length > 0){
+        securitytype = 'ssh'
+      }
       return {
-        groupid: groupId,
+        // groupid: groupId,
+        id: this.$uuid().replace(/-/g, ''),
+        name: rdmserver.name,
+        host: rdmserver.host,
+        port: rdmserver.port,
+        password: rdmserver.auth,
+        cluster: false,
+        clusternodes: null,
+        defaultdatabase: 0,
+        maxloadkeysize: 1000,
+        groupshow: (rdmserver.namespace_separator && rdmserver.namespace_separator.length > 0),
+        grouptype: 'split',
+        substrsize: 3,
+        splitstr: rdmserver.namespace_separator,
+        encoding: 'utf8',
+        sort: false,
+        securitytype: securitytype,
+        sslcafile: rdmserver.ssl_local_cert_path,
+        sslkeyfile: rdmserver.ssl_private_key_path,
+        sslcertfile: rdmserver.ssl_ca_cert_path,
+        sshhost: rdmserver.ssh_host,
+        sshport: rdmserver.ssh_port,
+        sshusername: rdmserver.ssh_user,
+        sshpassword: rdmserver.ssh_password,
+        sshkeyfile: rdmserver.ssh_private_key_path,
+        sshkeypassphrase: rdmserver.ssh_password,
+        sshkeytype: (rdmserver.ssh_private_key_path && rdmserver.ssh_private_key_path.length > 0) ? 'keyfile' : 'pass'
+      }
+    },
+    onExportSettings(){
+      let that = this
+      bridge.showSaveDialog({
+        title: this.$t('Select export file'),
+        filters:[
+                  { name: this.$t('Config file type'), extensions:['json']},
+                  { name: this.$t('All file type'), extensions:['*']}
+        ],
+        properties: ['createDirectory','showOverwriteConfirmation']
+      }).then(result =>{
+        if(!result || result.canceled == true || !result.filePath || result.filePath.length <= 0){
+          return
+        }
+        return bridge.saveFile(result.filePath,JSON.stringify({'srt':that.serverGroups}),{append: false})
+      }).then(result => {
+      })
+    },
+    onTreeAllowdrop(draggingNode, dropNode, type){
+      let draggingNodeType = draggingNode.data.host ? 'server':'group'
+      let dropNodeType = dropNode.data.host ? 'server':'group'
+      if(draggingNodeType == dropNodeType){
+        return !(type == 'inner')
+      }
+      if(draggingNodeType == 'group'){
+        return false
+      }
+      return type == 'inner'
+    },
+    onTreeDragEnd(draggingNode, dropNode, type,event){
+      // console.log(draggingNode, dropNode, type,event)
+      // console.log(this.serverGroups)
+      bridge.setConfig('servergroups',this.serverGroups)
+    },
+    defaultServerInfo(){
+      return {
+        // groupid: groupId,
         id: '',
+        name: '',
         host: 'localhost',
         port: 6379,
         password: '',
@@ -718,5 +996,17 @@ export default {
 .clsuter-node{
   width: 20%;
   margin-right: 10px;
+}
+
+.custom-tree-node {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  padding-right: 8px;
+}
+.el-tree >>>.el-tree-node__content{
+  height: 43px !important;
 }
 </style>

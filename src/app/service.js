@@ -1,6 +1,7 @@
 'use strict'
-const { app, ipcMain } = require('electron')
+const { app, ipcMain, dialog } = require('electron')
 const store = require('./store')
+const fsPromises = require('fs').promises
 
 const service = function Service() {
   // public exports
@@ -40,6 +41,22 @@ const service = function Service() {
       }
     }
     event.returnValue = 'OK'
+  })
+
+  ipcMain.handle('showSaveDialog', async (event, options) => {
+    return await dialog.showSaveDialog(service.mainWindow.win,options)
+  })
+
+  ipcMain.handle('showOpenDialog', async (event, options) => {
+    return await dialog.showOpenDialog(service.mainWindow.win,options)
+  })
+
+  ipcMain.handle('saveFile', async (event, args) => {
+    return await fsPromises.writeFile(args.filePath,args.content,args.options)
+  })
+
+  ipcMain.handle('readFile', async (event, args) => {
+    return await fsPromises.readFile(args.filePath,args.options)
   })
 
   return service
