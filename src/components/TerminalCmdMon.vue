@@ -20,7 +20,7 @@
       </el-form>
     </el-header>
     <el-main>
-      <div id="xterm-monitor" style="width:100%;height:95%">
+      <div id="xterm-monitor" style="width:100%;height: calc(100% - 5px)">
       </div>
     </el-main>
   </el-container>  

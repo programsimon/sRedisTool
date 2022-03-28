@@ -46,8 +46,10 @@ export default {
     eventBus.$on('addConnection', config => {
       this.addConnection(config)
     })
-    
-    this.$i18n.locale = bridge.getConfig('language')
+    let locale = bridge.getConfig('language')
+    if(locale){
+      this.$i18n.locale = locale
+    }
   },
   methods: {
     languageChanged(languageCode) {

@@ -10,7 +10,6 @@ export default {
     return Redis(...args)
       .then(redis => {
         redis.connectionId = uuidv4()
-        console.log(redis)
         that.connections.push(redis)
         return redis
       })

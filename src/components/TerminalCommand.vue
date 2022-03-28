@@ -20,7 +20,7 @@
       </el-form>
     </el-header>
     <el-main>
-      <div id="xterm-command" style="width:100%;height:95%">
+      <div id="xterm-command" style="width:100%;height: calc(100% - 5px)">
       </div>
     </el-main>
   </el-container>  
@@ -71,7 +71,6 @@ export default {
     })
   },
   beforeDestroy() {
-    // this.stopMonitor()
   },
   methods: {
     initServerList() {

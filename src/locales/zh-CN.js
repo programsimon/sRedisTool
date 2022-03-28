@@ -48,6 +48,7 @@ module.exports = {
   'Test Connection': '测试连接',
   'Host': '主机',
   'Port': '端口',
+  'User Name': '用户名',
   'Password': '密码',
   'Show Password': '显示密码',
   'Cluster config': '集群选项',
@@ -80,6 +81,7 @@ module.exports = {
   'Maxloadkeysize help': '每次从Redis服务器读取的键的数量，同样对读取键的字段信息也有效。',
   'Splitchar help': '分隔符可以是字符串，也可以是单个字符；同时可以设置多个分隔符，每个分隔符以“;”分隔，分隔符中包含“;”时，请使用“;;”转义。',
   'Add node help': '应用会自动读取所有的在集群中的节点信息，一般可不必单独设置节点信息。如果每个节点的密码不同时，此设置是必须的',
+  'User Name help': '认证用户名(Redis > 6.0)',
   // Open server dialog
   'select server': '请选择一个服务器配置',
   'Edit Server': '修改服务器配置',

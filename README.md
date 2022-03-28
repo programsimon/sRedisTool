@@ -19,6 +19,7 @@ This tool is supported to run on Windows, Mac and Linux environments and is curr
 * Multi-language support, currently supports Simplified Chinese, English.
 * Connect using SSL/TLS, SSH。(Cluster mode using SSH connection is not supported at this time)
 * Can import and export configuration files, can import RESP.app configuration file
+* Support authentication username (Redis > 6.0)
 
 ## Project setup
 ### Project initialization

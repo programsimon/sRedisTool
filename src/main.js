@@ -26,7 +26,6 @@ const i18n = function() {
       require('element-ui/lib/locale/lang/' + languageCode).default
       )
   })
-  
   return new VueI18n({
     locale: navigator.language,
     messages: languageCatalogs,

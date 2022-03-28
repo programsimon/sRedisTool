@@ -48,6 +48,7 @@ module.exports = {
   'Test Connection': 'Test Connection',
   'Host': 'Host',
   'Port': 'Port',
+  'User Name': 'User Name',
   'Password': 'Password',
   'Show Password': 'Show Password',
   'Cluster config': 'Cluster Config',
@@ -80,6 +81,7 @@ module.exports = {
   'Maxloadkeysize help': 'The number of keys read from the Redis server each time is also valid for reading key field information.',
   'Splitchar help': 'The separator can be a string or a single character; multiple separators can be set at the same time, each separator is separated by ";", when the separator contains ";", please use ";;" to escape.',
   'Add node help': 'The application will automatically read all the node information in the cluster, and it is generally unnecessary to set the node information separately. If the password of each node is different, this setting is necessary.',
+  'User Name help': 'Authentication user name (Redis > 6.0)',
   // Open server dialog
   'select server': 'Please select a server configuration.',
   'Edit Server': 'Edit Server',

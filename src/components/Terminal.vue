@@ -1,17 +1,16 @@
 <template>
   <el-tabs 
     class="st-container"
-    tab-position="top"
+    tab-position="left"
     v-model="activeTab"
     stretch
     @tab-click="onTabSwitched"
     >
     <el-tab-pane 
       name="terminal">
-      <span slot="label">
-          <i class="el-icon-monitor"></i>
-          {{$t('Terminal')}}
-      </span>
+      <el-tooltip slot="label" effect="light" :content="$t('Terminal')" placement="right">
+        <i class="el-icon-monitor"></i>
+      </el-tooltip>
       <terminal-command
         :config="config"
         :redisId="redisId">
@@ -19,10 +18,9 @@
     </el-tab-pane>
     <el-tab-pane 
       name="monitor">
-      <span slot="label">
-          <i class="el-icon-headset"></i>
-          {{$t('Command monitor')}}
-      </span>
+      <el-tooltip slot="label" effect="light" :content="$t('Command monitor')" placement="right">
+        <i class="el-icon-headset"></i>
+      </el-tooltip>
       <terminal-cmd-mon
         :config="config"
         :redisId="redisId">

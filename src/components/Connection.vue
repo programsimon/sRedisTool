@@ -127,8 +127,11 @@ export default {
             redis.close()
           });
 
+          console.log(redis)
+
           // give it to all compnents
           redis.once('ready', async () => {
+
             redis.removeAllListeners('error')
             // this.$refs.keyFooter.onRedisReady()
 

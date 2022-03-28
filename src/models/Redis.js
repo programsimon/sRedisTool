@@ -19,6 +19,7 @@ function Redis(...args) {
     var options = {
       host: server.host,
       port: server.port,
+      username: server.username,
       password: server.password,
       retryStrategy(times) {
         let delay = Math.min(times * 50, 2000)
@@ -174,6 +175,7 @@ function asyncConnectBySSH(options){
 }
 function newioredis(...args){
   let redis = new ioredis(...args)
+
   redis.close = ()=> {
     this.quit()
       .catch( (error) => {})

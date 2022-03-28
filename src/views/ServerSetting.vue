@@ -7,9 +7,9 @@
         :props="treeProps"
         draggable
         :allow-drop="onTreeAllowdrop"
-        @node-drop='onTreeDragEnd'>
+        @node-drop='onTreeDragEnd'
+        @node-click='onServerSelected'>
         <div slot-scope="{ node, data }" class="custom-tree-node">
-          <!-- <div v-show="!data.host" class="custom-tree-node"> -->
             <div v-show="!data.host">
               <i class="el-icon-folder" ></i>
               <span style="padding-left:10px">{{data.name}}</span>
@@ -25,9 +25,6 @@
               <el-tooltip effect="light" :content="$t('Delete Group')" placement="bottom">
                 <el-button :plain="true" size="small" icon="el-icon-delete-solid" @click.stop="onDeleteGroup(data.id)"/>
               </el-tooltip>
-              <!-- <el-tooltip effect="light" :content="$t('Sort')" placement="bottom">
-                <el-button :plain="true" size="small" icon="el-icon-sort" @click.stop="onSortGroup(data.id)"/>
-              </el-tooltip> -->
               <el-tooltip effect="light" :content="$t('Add Redis Server')" placement="bottom">
                 <el-button :plain="true" size="small" icon="el-icon-plus" @click.stop="onAddServer(data.id)"/>
               </el-tooltip>
@@ -40,77 +37,8 @@
                 <el-button :plain="true" size="small" icon="el-icon-folder-opened" @click="onOpenServer(data.id)"/>
               </el-tooltip>
             </el-button-group>
-          <!-- </div> -->
-          <!-- <div v-show="data.host" class="custom-tree-node">
-            <i class="el-icon-connection" ></i>
-            <span>{{data.name}}</span>
-            <el-button-group>
-              <el-tooltip effect="light" :content="$t('Delete Server')" placement="bottom">
-                <el-button :plain="true" size="mini" icon="el-icon-delete" @click="onDeleteServer(server.id, group.id)"/>
-              </el-tooltip>
-              <el-tooltip effect="light" :content="$t('Open Server')" placement="bottom">
-                <el-button :plain="true" size="mini" icon="el-icon-folder-opened" @click="onOpenServer(server.id)"/>
-              </el-tooltip>
-            </el-button-group>
-          </div> -->
         </div>
-        <!-- <span class="custom-tree-node" slot-scope="{ node, data }">
-          <i class="el-icon-folder" ></i>
-          <span>{{ node.label }}</span>
-          <span>
-            <el-button
-              type="text"
-              size="mini"
-              @click="() => append(data)">
-              Append
-            </el-button>
-            <el-button
-              type="text"
-              size="mini"
-              @click="() => remove(node, data)">
-              Delete
-            </el-button>
-          </span>
-        </span> -->
       </el-tree>
-      <!--
-      <el-menu ref="mnuServers" @select="onServerSelected">
-        <el-submenu :index="group.id" v-for="group in serverGroups" :key="group.id">
-          <template slot="title">
-            <i class="el-icon-folder"></i>
-            <span>{{group.name}}</span>
-            <el-button-group class="server-group-button">
-              <el-tooltip effect="light" :content="$t('Rename Group')" placement="bottom">
-                <el-button :plain="true" size="mini" icon="el-icon-s-tools" @click.stop="onRenameGroup(group.id)"/>
-              </el-tooltip>
-              <el-tooltip effect="light" :content="$t('Delete Group')" placement="bottom">
-                <el-button :plain="true" size="mini" icon="el-icon-delete-solid" @click.stop="onDeleteGroup(group.id)"/>
-              </el-tooltip>
-              <el-tooltip effect="light" :content="$t('Sort')" placement="bottom">
-                <el-button :plain="true" size="mini" icon="el-icon-sort" @click.stop="onSortGroup(group.id)"/>
-              </el-tooltip>
-              <el-tooltip effect="light" :content="$t('Add Redis Server')" placement="bottom">
-                <el-button :plain="true" size="mini" icon="el-icon-plus" @click.stop="onAddServer(group.id)"/>
-              </el-tooltip>
-            </el-button-group>
-          </template>
-          <el-menu-item :index="server.id" v-for="server in group.servers" :key="server.id">
-            <template slot="title">
-              <i class="el-icon-connection"></i>
-              <span>{{server.name}}</span>
-              <el-button-group class="server-group-button">
-                <el-tooltip effect="light" :content="$t('Delete Server')" placement="bottom">
-                  <el-button :plain="true" size="mini" icon="el-icon-delete" @click="onDeleteServer(server.id, group.id)"/>
-                </el-tooltip>
-                <el-tooltip effect="light" :content="$t('Open Server')" placement="bottom">
-                  <el-button :plain="true" size="mini" icon="el-icon-folder-opened" @click="onOpenServer(server.id)"/>
-                </el-tooltip>
-              </el-button-group>
-            </template>
-          </el-menu-item>
-        </el-submenu>
-      </el-menu>
-      -->
     </el-aside>
     <el-container>
       <el-main>
@@ -154,6 +82,11 @@
               <el-checkbox slot="append" :label="$t('Show Password')" v-model="showPassword"></el-checkbox>
             </el-input>
           </el-form-item>
+          <el-form-item :label="$t('User Name')">
+            <el-tooltip effect="light" :content="$t('User Name help')" placement="bottom">
+              <el-input v-model.number="curServer.username"></el-input>
+            </el-tooltip>
+          </el-form-item>
           
           <el-collapse v-model="activeConfigSctions">
             <el-collapse-item name="cluster">
@@ -177,6 +110,9 @@
                 <el-input size="mini" v-model="node.host"  :placeholder="$t('Host')" class="clsuter-node"></el-input>
                 <el-input size="mini" v-model="node.port" :placeholder="$t('Port')" class="clsuter-node"></el-input>
                 <el-input size="mini" v-model="node.password" :placeholder="$t('Password')" :show-password="true" class="clsuter-node"></el-input>
+                <el-tooltip effect="light" :content="$t('User Name help')" placement="bottom">
+                  <el-input size="mini" v-model="node.username" :placeholder="$t('User Name')" class="clsuter-node"></el-input>
+                </el-tooltip>
                 <el-button style="clsuter-node" size="small" :plain="true" @click="onDeleteNode(node)">{{$t('Delete node')}}</el-button>
               </el-form-item>
               </div>
@@ -508,9 +444,15 @@ export default {
       this.curGroup = this.findGroup(groupId)
       this.doShowEditArea()
     },
-    onServerSelected(serverId, ids) {
-      var group = this.findGroup(ids[0])
-      var server = this.findServer(serverId, group)
+    onServerSelected(data,node,component){
+      let group = this.findGroup(data.id)
+      if(group){
+        return
+      }
+      let server = this.findServer(data.id)
+      if(!server){
+        return
+      }
       this.curServer = _.defaultsDeep(_.cloneDeep(server),this.defaultServerInfo())
       this.doShowEditArea()
     },
@@ -557,21 +499,16 @@ export default {
         if(!group) {
           // use the first one
           group = this.serverGroups[0]
-          // this.curServer.groupid = group.id
         }
 
         var serverIndex = this.findServerIndex(this.curServer.id, group)
 
         if(serverIndex >= 0) {
           var s = _.cloneDeepWith(this.curServer)
-          // delete groupid prop
-          // s = _.omit(s, ['groupid']);
-          group.servers[serverIndex] = s
+          group.servers.splice(serverIndex,1,s)
         }else {
           this.curServer.id = this.$uuid().replace(/-/g, '')
           var s = _.cloneDeepWith(this.curServer)
-          // delete groupid prop
-          // s = _.omit(s, ['groupid'])
           if(!group.servers){
             group.servers = []
           }
@@ -693,6 +630,7 @@ export default {
       let node = {
         host: '',
         port: 6379,
+        username: '',
         password: ''
       }
       this.curServer.clusternodes.push(node)
@@ -881,6 +819,7 @@ export default {
         name: rdmserver.name,
         host: rdmserver.host,
         port: rdmserver.port,
+        username: rdmserver.username,
         password: rdmserver.auth,
         cluster: false,
         clusternodes: null,
@@ -945,6 +884,7 @@ export default {
         name: '',
         host: 'localhost',
         port: 6379,
+        username: '',
         password: '',
         cluster: false,
         clusternodes: null,
